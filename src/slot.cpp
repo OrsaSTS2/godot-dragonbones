@@ -305,6 +305,8 @@ void Slot_GD::_updateMesh() {
 
 			verticesPos_ptr[i] = Vector2(xG, yG);
 		}
+
+		meshDisplay->transform = Transform2D();
 	} else if (hasFFD) {
 		const auto data = verticesData->data;
 		const auto intArray = data->intArray;

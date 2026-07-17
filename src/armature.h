@@ -115,7 +115,7 @@ public:
 				continue;
 			}
 			if (slot->getDisplayIndex() < 0) {
-				slot->setDisplayIndex(0);
+				continue;
 			}
 			auto display = slot->getDisplayList()[slot->getDisplayIndex()];
 			if (display.second == dragonBones::DisplayType::Armature) {
@@ -179,6 +179,8 @@ public:
 			int p_loop_count, int p_layer, const String &p_group, AnimFadeOutMode p_fade_out_mode);
 
 	void reset(bool p_recursively = false);
+	void reset_bones_to_setup_pose(bool p_recursively = false);
+	void reset_slots_to_setup_pose(bool p_recursively = false);
 
 	bool has_slot(const String &p_slot_name) const;
 	Ref<DragonBonesSlot> get_slot(const String &p_slot_name);

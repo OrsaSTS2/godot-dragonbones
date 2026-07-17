@@ -30,7 +30,11 @@
 
 #include "armature.h"
 
+#include <dragonBones/armature/Bone.h>
+#include <dragonBones/armature/DeformVertices.h>
+#include <dragonBones/armature/Slot.h>
 #include <dragonBones/event/EventObject.h>
+#include <dragonBones/model/ArmatureData.h>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -81,6 +85,8 @@ void DragonBonesArmature::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("fade_in", "animation_name", "time", "loop", "layer", "group", "fade_out_mode"), &DragonBonesArmature::fade_in);
 
 	ClassDB::bind_method(D_METHOD("reset", "recursively"), &DragonBonesArmature::reset, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("reset_bones_to_setup_pose", "recursively"), &DragonBonesArmature::reset_bones_to_setup_pose, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("reset_slots_to_setup_pose", "recursively"), &DragonBonesArmature::reset_slots_to_setup_pose, DEFVAL(false));
 
 	ClassDB::bind_method(D_METHOD("has_slot", "slot_name"), &DragonBonesArmature::has_slot);
 	ClassDB::bind_method(D_METHOD("get_slot", "slot_name"), &DragonBonesArmature::get_slot);
@@ -387,6 +393,57 @@ void DragonBonesArmature::reset(bool p_recursively) {
 	if (p_recursively) {
 		for_each_armature([](DragonBonesArmature *p_child_armature) {
 			p_child_armature->reset(true);
+		});
+	}
+}
+
+void DragonBonesArmature::reset_bones_to_setup_pose(bool p_recursively) {
+	if (armature_instance) {
+		for (const auto bone : armature_instance->getBones()) {
+			bone->animationPose.identity();
+			bone->invalidUpdate();
+		}
+	}
+
+	if (p_recursively) {
+		for_each_armature([](DragonBonesArmature *p_child_armature) {
+			p_child_armature->reset_bones_to_setup_pose(true);
+		});
+	}
+}
+
+void DragonBonesArmature::reset_slots_to_setup_pose(bool p_recursively) {
+	if (armature_instance) {
+		for (const auto slot : armature_instance->getSlots()) {
+			const dragonBones::SlotData *slot_data = slot->getSlotData();
+
+			int setup_display_index = slot_data->displayIndex;
+			slot->_setDisplayIndex(setup_display_index, true);
+			if (slot->getDisplayIndex() != setup_display_index) {
+				slot->_setDisplayIndex(setup_display_index, false);
+			}
+
+			slot->_setZorder(slot_data->zOrder);
+
+			const dragonBones::ColorTransform *setup_color = slot_data->color != nullptr ? slot_data->color : dragonBones::SlotData::getDefaultColor();
+			slot->_setColor(*setup_color);
+
+			dragonBones::DeformVertices *deform = slot->_deformVertices;
+			if (deform != nullptr) {
+				for (std::size_t i = 0; i < deform->vertices.size(); ++i) {
+					deform->vertices[i] = 0.0f;
+				}
+
+				deform->verticesDirty = true;
+			}
+
+			slot->invalidUpdate();
+		}
+	}
+
+	if (p_recursively) {
+		for_each_armature([](DragonBonesArmature *p_child_armature) {
+			p_child_armature->reset_slots_to_setup_pose(true);
 		});
 	}
 }
