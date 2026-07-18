@@ -207,6 +207,7 @@ public:
 	float get_current_animation_time() const;
 	float get_current_animation_duration() const;
 	void set_current_animation_time(float p_time);
+	void set_current_animation_loop(bool p_loop);
 
 	void set_flip_x_(bool p_flip_x) { set_flip_x(p_flip_x); }
 	void set_flip_x(bool p_flip_x, bool p_recursively = false);

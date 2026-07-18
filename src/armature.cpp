@@ -113,6 +113,7 @@ void DragonBonesArmature::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_current_animation_time"), &DragonBonesArmature::get_current_animation_time);
 	ClassDB::bind_method(D_METHOD("get_current_animation_duration"), &DragonBonesArmature::get_current_animation_duration);
 	ClassDB::bind_method(D_METHOD("set_current_animation_time", "time"), &DragonBonesArmature::set_current_animation_time);
+	ClassDB::bind_method(D_METHOD("set_current_animation_loop", "loop"), &DragonBonesArmature::set_current_animation_loop);
 
 	ClassDB::bind_method(D_METHOD("set_flip_x_", "flip_x"), &DragonBonesArmature::set_flip_x_);
 	ClassDB::bind_method(D_METHOD("is_flipped_x"), &DragonBonesArmature::is_flipped_x);
@@ -669,6 +670,15 @@ void DragonBonesArmature::set_current_animation_time(float p_time) {
 		AnimationState *animation_state = getAnimation()->getState(to_std_str(get_current_animation()));
 		if (animation_state) {
 			animation_state->setCurrentTime(p_time);
+		}
+	}
+}
+
+void DragonBonesArmature::set_current_animation_loop(bool p_loop) {
+	if (getAnimation()) {
+		AnimationState *animation_state = getAnimation()->getState(to_std_str(get_current_animation()));
+		if (animation_state) {
+			animation_state->playTimes = p_loop ? 0 : 1;
 		}
 	}
 }
