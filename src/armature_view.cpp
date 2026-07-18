@@ -575,6 +575,9 @@ void DragonBonesArmatureView::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_animation_progress", "progress"), &DragonBonesArmatureView::set_animation_progress);
 	ClassDB::bind_method(D_METHOD("get_animation_progress"), &DragonBonesArmatureView::get_animation_progress);
+	ClassDB::bind_method(D_METHOD("get_current_animation_time"), &DragonBonesArmatureView::get_current_animation_time);
+	ClassDB::bind_method(D_METHOD("get_current_animation_duration"), &DragonBonesArmatureView::get_current_animation_duration);
+	ClassDB::bind_method(D_METHOD("set_current_animation_time", "time"), &DragonBonesArmatureView::set_current_animation_time);
 
 	ClassDB::bind_method(D_METHOD("set_flip_x_", "flip_x"), &DragonBonesArmatureView::set_flip_x_);
 	ClassDB::bind_method(D_METHOD("is_flipped_x"), &DragonBonesArmatureView::is_flipped_x);
@@ -774,6 +777,21 @@ void DragonBonesArmatureView::set_animation_progress(float p_progress) {
 float DragonBonesArmatureView::get_animation_progress() const {
 	ERR_FAIL_NULL_V(armature, 0.0f);
 	return armature->get_animation_progress();
+}
+
+float DragonBonesArmatureView::get_current_animation_time() const {
+	ERR_FAIL_NULL_V(armature, 0.0f);
+	return armature->get_current_animation_time();
+}
+
+float DragonBonesArmatureView::get_current_animation_duration() const {
+	ERR_FAIL_NULL_V(armature, 0.0f);
+	return armature->get_current_animation_duration();
+}
+
+void DragonBonesArmatureView::set_current_animation_time(float p_time) {
+	ERR_FAIL_NULL(armature);
+	armature->set_current_animation_time(p_time);
 }
 
 void DragonBonesArmatureView::set_flip_x(bool p_flip_x, bool p_recursively) {
