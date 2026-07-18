@@ -183,6 +183,8 @@ public:
 	void reset_slots_to_setup_pose(bool p_recursively = false);
 
 	void replace_skin(const String &p_skin_name, bool p_is_override = false);
+	void apply_skin_display(const String &p_display_name);
+	Dictionary get_slot_display_names() const;
 
 	bool has_slot(const String &p_slot_name) const;
 	Ref<DragonBonesSlot> get_slot(const String &p_slot_name);

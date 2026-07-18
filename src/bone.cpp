@@ -84,6 +84,8 @@ void DragonBonesBone::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("get_offset_mode"), &DragonBonesBone::get_offset_mode);
 	ClassDB::bind_method(D_METHOD("get_offset"), &DragonBonesBone::get_offset);
+	ClassDB::bind_method(D_METHOD("set_offset_rotation", "deg_in_rad"), &DragonBonesBone::set_offset_rotation);
+	ClassDB::bind_method(D_METHOD("set_offset_scale", "scale"), &DragonBonesBone::set_offset_scale);
 	ClassDB::bind_method(D_METHOD("get_animation_pose"), &DragonBonesBone::get_animation_pose);
 	ClassDB::bind_method(D_METHOD("get_origin"), &DragonBonesBone::get_origin);
 
@@ -233,6 +235,19 @@ DragonBonesBone::OffsetMode DragonBonesBone::get_offset_mode() const {
 Transform2D DragonBonesBone::get_offset() const {
 	ERR_FAIL_NULL_V(boneData, {});
 	return to_gd_transform(boneData->offset);
+}
+
+void DragonBonesBone::set_offset_rotation(float p_rotation) {
+	ERR_FAIL_NULL(boneData);
+	boneData->offset.rotation = p_rotation;
+	boneData->invalidUpdate();
+}
+
+void DragonBonesBone::set_offset_scale(Vector2 p_scale) {
+	ERR_FAIL_NULL(boneData);
+	boneData->offset.scaleX = p_scale.x;
+	boneData->offset.scaleY = p_scale.y;
+	boneData->invalidUpdate();
 }
 
 Transform2D DragonBonesBone::get_animation_pose() const {

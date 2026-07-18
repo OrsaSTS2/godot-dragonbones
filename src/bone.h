@@ -92,6 +92,8 @@ public:
 	// Others
 	OffsetMode get_offset_mode() const;
 	Transform2D get_offset() const;
+	void set_offset_rotation(float p_rotation);
+	void set_offset_scale(Vector2 p_scale);
 	Transform2D get_animation_pose() const;
 	Transform2D get_origin() const;
 };

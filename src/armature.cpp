@@ -35,6 +35,7 @@
 #include <dragonBones/armature/Slot.h>
 #include <dragonBones/event/EventObject.h>
 #include <dragonBones/model/ArmatureData.h>
+#include <dragonBones/model/DisplayData.h>
 #include <godot_cpp/classes/engine.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/ref.hpp>
@@ -89,6 +90,8 @@ void DragonBonesArmature::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset_bones_to_setup_pose", "recursively"), &DragonBonesArmature::reset_bones_to_setup_pose, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("reset_slots_to_setup_pose", "recursively"), &DragonBonesArmature::reset_slots_to_setup_pose, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("replace_skin", "skin_name", "is_override"), &DragonBonesArmature::replace_skin, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("apply_skin_display", "display_name"), &DragonBonesArmature::apply_skin_display);
+	ClassDB::bind_method(D_METHOD("get_slot_display_names"), &DragonBonesArmature::get_slot_display_names);
 
 	ClassDB::bind_method(D_METHOD("has_slot", "slot_name"), &DragonBonesArmature::has_slot);
 	ClassDB::bind_method(D_METHOD("get_slot", "slot_name"), &DragonBonesArmature::get_slot);
@@ -452,6 +455,45 @@ void DragonBonesArmature::reset_slots_to_setup_pose(bool p_recursively) {
 			p_child_armature->reset_slots_to_setup_pose(true);
 		});
 	}
+}
+
+void DragonBonesArmature::apply_skin_display(const String &p_display_name) {
+	ERR_FAIL_NULL(armature_instance);
+
+	std::string target = to_std_str(p_display_name);
+	for (const auto slot : armature_instance->getSlots()) {
+		const std::vector<dragonBones::DisplayData *> *raw = slot->getRawDisplayDatas();
+		if (raw == nullptr || raw->size() <= 1) {
+			continue;
+		}
+
+		for (std::size_t i = 0; i < raw->size(); ++i) {
+			const dragonBones::DisplayData *display = raw->at(i);
+			if (display != nullptr && display->name == target) {
+				slot->setDisplayIndex((int)i);
+				break;
+			}
+		}
+	}
+}
+
+Dictionary DragonBonesArmature::get_slot_display_names() const {
+	Dictionary ret;
+	ERR_FAIL_NULL_V(armature_instance, ret);
+
+	for (const auto slot : armature_instance->getSlots()) {
+		const std::vector<dragonBones::DisplayData *> *raw = slot->getRawDisplayDatas();
+		if (raw == nullptr) {
+			continue;
+		}
+
+		PackedStringArray names;
+		for (const auto display : *raw) {
+			names.push_back(display != nullptr ? to_gd_str(display->name) : String());
+		}
+		ret[to_gd_str(slot->getName())] = names;
+	}
+	return ret;
 }
 
 void DragonBonesArmature::replace_skin(const String &p_skin_name, bool p_is_override) {
