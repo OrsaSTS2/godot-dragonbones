@@ -93,6 +93,8 @@ public:
 
 	DragonBonesArmature *create_armature(DragonBonesArmatureView *p_owner, const String &p_dragon_bones_data_name = "", const String &p_armature_name = "", const String &p_skin_name = "");
 
+	bool replace_armature_skin(class DragonBonesArmature *p_armature, const String &p_skin_name, bool p_is_override = false);
+
 private:
 	//  Binding
 	PackedStringArray dragon_bones_ske_file_list;

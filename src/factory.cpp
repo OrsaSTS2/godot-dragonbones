@@ -32,6 +32,7 @@
 
 #include <dragonBones/animation/WorldClock.h>
 #include <dragonBones/core/DragonBones.h>
+#include <dragonBones/model/ArmatureData.h>
 
 #include <godot_cpp/classes/dir_access.hpp>
 #include <godot_cpp/classes/engine.hpp>
@@ -374,6 +375,24 @@ PackedStringArray DragonBonesFactory::get_loaded_dragon_bones_skin_name_list(con
 		}
 	}
 	return ret;
+}
+
+bool DragonBonesFactory::replace_armature_skin(DragonBonesArmature *p_armature, const String &p_skin_name, bool p_is_override) {
+	ERR_FAIL_NULL_V(p_armature, false);
+
+	dragonBones::Armature *armature = p_armature->getArmature();
+	ERR_FAIL_NULL_V(armature, false);
+
+	const dragonBones::ArmatureData *armature_data = armature->getArmatureData();
+	ERR_FAIL_NULL_V(armature_data, false);
+
+	dragonBones::SkinData *skin = armature_data->getSkin(to_std_str(p_skin_name));
+	if (skin == nullptr) {
+		WARN_PRINT(vformat("DragonBones: armature has no skin named \"%s\".", p_skin_name));
+		return false;
+	}
+
+	return replaceSkin(armature, skin, p_is_override, nullptr);
 }
 
 bool DragonBonesFactory::can_create_dragon_bones_instance() const {

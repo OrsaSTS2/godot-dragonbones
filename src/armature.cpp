@@ -44,6 +44,7 @@
 #include "armature_view.h"
 #include "dragon_bones.h"
 #include "event_object.h"
+#include "factory.h"
 #include "mesh_display.h"
 
 using namespace godot;
@@ -87,6 +88,7 @@ void DragonBonesArmature::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("reset", "recursively"), &DragonBonesArmature::reset, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("reset_bones_to_setup_pose", "recursively"), &DragonBonesArmature::reset_bones_to_setup_pose, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("reset_slots_to_setup_pose", "recursively"), &DragonBonesArmature::reset_slots_to_setup_pose, DEFVAL(false));
+	ClassDB::bind_method(D_METHOD("replace_skin", "skin_name", "is_override"), &DragonBonesArmature::replace_skin, DEFVAL(false));
 
 	ClassDB::bind_method(D_METHOD("has_slot", "slot_name"), &DragonBonesArmature::has_slot);
 	ClassDB::bind_method(D_METHOD("get_slot", "slot_name"), &DragonBonesArmature::get_slot);
@@ -449,6 +451,16 @@ void DragonBonesArmature::reset_slots_to_setup_pose(bool p_recursively) {
 			p_child_armature->reset_slots_to_setup_pose(true);
 		});
 	}
+}
+
+void DragonBonesArmature::replace_skin(const String &p_skin_name, bool p_is_override) {
+	ERR_FAIL_NULL(armature_instance);
+	ERR_FAIL_NULL(armature_view);
+
+	Ref<DragonBonesFactory> factory = armature_view->get_factory();
+	ERR_FAIL_COND(factory.is_null());
+
+	factory->replace_armature_skin(this, p_skin_name, p_is_override);
 }
 
 bool DragonBonesArmature::has_slot(const String &p_slot_name) const {
