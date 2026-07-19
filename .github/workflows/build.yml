@@ -120,7 +120,7 @@ jobs:
 
             - name: Setup version
               run: |
-                echo BUILD_VERSION=$(head -n 1 ./version) >> $GITHUB_ENV
+                echo BUILD_VERSION=$(head -n 1 ./version.txt) >> $GITHUB_ENV
 
             - name: Merge Artifacts to all in one
               uses: actions/upload-artifact/merge@v4
