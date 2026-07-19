@@ -1,0 +1,34 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Open Godot",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/.tools/godot.exe",
+            "args": ["--editor", "--path", "${workspaceFolder}/.godot-project"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Build (Windows)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "C:\\Windows\\System32\\cmd.exe",
+            "args": ["/c", "exit"],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build addon (debug + release)",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Build (Windows) + Open Godot",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/.tools/godot.exe",
+            "args": ["--editor", "--path", "${workspaceFolder}/.godot-project"],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build addon (debug)",
+            "console": "internalConsole"
+        }
+    ]
+}

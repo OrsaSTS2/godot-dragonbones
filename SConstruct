@@ -38,7 +38,7 @@ import os
 os.system("chcp 65001")
 
 
-env = SConscript("godot-cpp/SConstruct")
+env = SConscript(".vendor/godot-cpp/SConstruct")
 lib_name = "libgddragonbones"
 # For the reference:
 # - CCFLAGS are compilation flags shared between C and C++
@@ -50,15 +50,17 @@ lib_name = "libgddragonbones"
 # - LINKFLAGS are for linking flags
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
-env.Append(CPPPATH=["src/", "thirdparty/"])
-sources = Glob("src/*.cpp") + Glob("register_types.cpp")
+env.Append(CPPPATH=["src/", ".vendor/"])
+if env.get("is_msvc", False):
+    env.Append(LINKFLAGS=["/ignore:4099"])
+sources = Glob("src/*.cpp")
 
 
 output_bin_folder = "./bin"
-plugin_folder = "./demo/addons/godot_dragon_bones.daylily-zeleen"
+plugin_folder = "./.godot-project/addons/godot_dragonbones"
 plugin_bin_folder = f"{plugin_folder}/bin"
 
-extension_file = "demo/addons/godot_dragon_bones.daylily-zeleen/godot_dragon_bones.gdextension"
+extension_file = ".godot-project/addons/godot_dragonbones/godot_dragonbones.gdextension"
 
 generated_doc_data_file :str = "gen/doc_data.cpp"
 
@@ -73,15 +75,18 @@ def add_sources_recursively(dir: str, glob_sources, exclude_folder: list = []):
 
 
 add_sources_recursively("src/", sources, ["editor"])
-add_sources_recursively("thirdparty/", sources)
+add_sources_recursively(".vendor/", sources, ["godot-cpp"])
 
 
 def _generate_doc_data() -> list[str]:
     # doc (godot-cpp 4.3 以上)
     if env["target"] in ["editor", "template_debug"]:
+        doc_sources = env.Glob("doc_classes/*.xml")
+        if len(doc_sources) == 0:
+            return []
         try:
             if not env.GetOption('clean'):
-                return env.GodotCPPDocData(generated_doc_data_file, source=env.Glob("doc_classes/*.xml"))
+                return env.GodotCPPDocData(generated_doc_data_file, source=doc_sources)
             else:
                 return [generated_doc_data_file]
         except AttributeError:
@@ -173,21 +178,20 @@ def on_complete(target, source, env):
         )
 
     copied_readme_file_path = os.path.join(plugin_folder, "README.md")
-    copied_readme_zh_file_path = os.path.join(plugin_folder, "README.zh.md")
 
     copy_file("README.md", copied_readme_file_path)
-    copy_file("README.zh.md", copied_readme_zh_file_path)
     copy_file("LICENSE", os.path.join(plugin_folder, "LICENSE"))
+    copy_file("THIRDPARTY_NOTICES.md", os.path.join(plugin_folder, "THIRDPARTY_NOTICES.md"))
 
     # 替换 readme 中图片的路径
-    for fp in [copied_readme_file_path, copied_readme_zh_file_path]:
+    for fp in [copied_readme_file_path]:
         f = open(fp, "r", encoding="utf8")
         lines = f.readlines()
         f.close()
 
         for i in range(len(lines)):
-            if lines[i].count("(demo/addons/godot_dragon_bones.daylily-zeleen/") > 0:
-                lines[i] = lines[i].replace("(demo/addons/godot_dragon_bones.daylily-zeleen/", "(")
+            if lines[i].count("(.godot-project/addons/godot_dragonbones/") > 0:
+                lines[i] = lines[i].replace("(.godot-project/addons/godot_dragonbones/", "(")
 
         f = open(fp, "w", encoding="utf8")
         f.writelines(lines)
@@ -200,7 +204,7 @@ def on_complete(target, source, env):
     lines = f.readlines()
     f.close()
 
-    version: str = open("version", "r").readline().strip()
+    version: str = open("version.txt", "r").readline().strip()
 
     for i in range(len(lines)):
         if lines[i].startswith('version = "') and lines[i].endswith('"\n'):
@@ -211,7 +215,7 @@ def on_complete(target, source, env):
     f.writelines(lines)
     f.close()
 
-    print(f"Update version number in \"godot_dragon_bones.gdextension\", {version}")
+    print(f"Update version number in \"godot_dragonbones.gdextension\", {version}")
 
 
 # Disable scons cache for source files

@@ -1,0 +1,31 @@
+[infomation]
+name = "Godot-DragonBones"
+version = "v2.1.0"
+decription = "A DragonBones plugin for Godot."
+author = "Orsa - Original by 忘忧の (Daylily Zeleen)"
+repo = "https://github.com/OrsaSTS2/godot-dragonbones"
+
+[icons]
+
+DragonBonesArmatureView = "icons/DragonBonesBlue.png"
+DragonBonesFactory = "icons/DragonBonesFactory.png"
+
+DragonBonesArmatureProxy = "icons/DragonBonesArmature.png"
+DragonBonesArmature = "icons/DragonBonesArmature.png"
+DragonBonesBone = "icons/DragonBonesBone.png"
+DragonBonesSlot = "icons/DragonBonesSlot.png"
+DragonBonesEventObject = "icons/DragonBonesWhite.png"
+DragonBonesUserData = "icons/DragonBonesWhite.png"
+
+[configuration]
+
+entry_symbol = "godot_dragon_bones_library_init"
+compatibility_minimum = 4.2
+
+[libraries]
+windows.x86_64.debug = "bin/libgddragonbones.windows.template_debug.x86_64.dll"
+windows.x86_64.release = "bin/libgddragonbones.windows.template_release.x86_64.dll"
+linux.x86_64.debug = "bin/libgddragonbones.linux.template_debug.x86_64.so"
+linux.x86_64.release = "bin/libgddragonbones.linux.template_release.x86_64.so"
+macos.debug = "bin/libgddragonbones.macos.template_debug.framework"
+macos.release = "bin/libgddragonbones.macos.template_release.framework"

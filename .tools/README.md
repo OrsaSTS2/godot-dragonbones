@@ -1,0 +1,1 @@
+Include a `godot.exe` in this folder for the VSCode launch configs to work.

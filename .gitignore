@@ -11,12 +11,13 @@ project/bin
 
 *.pdb
 
-.vscode/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/settings.json
 
 project/
-
-# Cmake
-build/
 
 # scons
 bin/
@@ -26,3 +27,6 @@ __pycache__/
 gen/
 
 *.log
+
+.tools/**
+!.tools/README.md

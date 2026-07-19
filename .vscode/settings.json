@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "SConstruct": "python",
+        "SConscript": "python"
+    },
+    "python.analysis.ignore": [
+        "**/SConstruct",
+        "**/SConscript"
+    ]
+}
